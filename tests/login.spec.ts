@@ -1,5 +1,6 @@
 import { test, expect } from '../pages/fixtures';
-import { Constants } from '../constants';
+import { Constants } from '../utilities/constants';
+import { Generate } from '../utilities/generate';
 
 test.describe('Login and Dashboard Tests', () => {
     test.beforeEach(async ({ loginPage }) => {
@@ -24,7 +25,7 @@ test.describe('Login and Dashboard Tests', () => {
     });
 
     test('Verify login fails with long input strings', async ({ loginPage }) => {
-        const longString = 'a'.repeat(256);
+        const longString = Generate.generateRandomString(256);
         await loginPage.login(longString, longString);
         await expect(loginPage.errorMessage).toBeVisible();
     });
