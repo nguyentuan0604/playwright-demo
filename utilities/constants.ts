@@ -24,7 +24,7 @@ export class Constants {
     static readonly EMPLOYEE_LIST_URL = config.EMPLOYEE_LIST_URL ?? 'https://opensource-demo.orangehrmlive.com/web/index.php/pim/viewEmployeeList';
     static readonly validUsername = config.VALID_USERNAME ?? 'Admin';
     static readonly validPassword = config.VALID_PASSWORD ?? 'admin123';
-    static readonly validEmployeeName = config.VALID_EMPLOYEE_NAME ?? 'Paul Collings';
+    static readonly validEmployeeName = config.VALID_EMPLOYEE_NAME ?? 'Test';
     static readonly timeout = parseInt(config.TIMEOUT ?? '10000');
     static readonly headless = config.HEADLESS === 'true';
     static readonly slowMo = parseInt(config.SLOW_MO ?? '1000');

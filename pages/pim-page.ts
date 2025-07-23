@@ -67,6 +67,9 @@ export class PimPage extends BasePage {
 
     async waitForSearchResults() {
         // Wait for either results table or no records found to appear
-        await this.page.waitForSelector('div.oxd-table-body, span.oxd-text--span:has-text("No Records Found")', { timeout: 10000 });
+        await Promise.any([
+            this.page.locator('span.oxd-text--span:has-text("No Records Found")').waitFor({ timeout: 5000 }),
+            this.page.locator('div.oxd-table-card').first().waitFor({ timeout: 5000 })
+        ]);
     }
 } 

@@ -9,6 +9,8 @@ export default defineConfig({
         actionTimeout: 10000,
         navigationTimeout: 10000,
     },
+    workers: 3, // Run tests in parallel with 3 workers
+    fullyParallel: true, // Enable fully parallel execution
     projects: [
         {
             name: 'Chromium',

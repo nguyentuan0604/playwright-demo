@@ -16,4 +16,5 @@ yarn-error.log*
 # OS generated files
 .DS_Store 
 allure-report/
-.profiles/.env* 
+allure-results/
+.profiles/.env*

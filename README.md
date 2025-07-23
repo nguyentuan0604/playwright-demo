@@ -85,6 +85,30 @@ npx playwright test --headed
 npx playwright test --debug
 ```
 
+**Run tests with specific browser/project:**
+```bash
+# Run tests on Chromium only
+npx playwright test --project=Chromium
+
+# Run tests on Firefox only
+npx playwright test --project=Firefox
+
+# Run tests on WebKit (Safari) only
+npx playwright test --project=WebKit
+
+# Run tests on multiple browsers
+npx playwright test --project=Chromium --project=Firefox
+```
+
+**Run tests with specific browser and environment:**
+```bash
+# Chromium with development environment
+TEST_ENV=dev npx playwright test --project=Chromium
+
+# Firefox with staging environment
+TEST_ENV=staging npx playwright test --project=Firefox
+```
+
 ### Test Reports
 
 **Generate HTML report:**

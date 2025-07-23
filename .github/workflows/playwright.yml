@@ -11,6 +11,15 @@ on:
         options:
         - dev
         - staging
+      project:
+        description: 'Browser/Project to test with'
+        required: false
+        default: 'Chromium'
+        type: choice
+        options:
+        - Chromium
+        - Firefox
+        - WebKit
 
 jobs:
   test:
@@ -33,7 +42,7 @@ jobs:
       run: npx playwright install --with-deps
     
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test --project=${{ github.event.inputs.project || 'Chromium' }}
       env:
         TEST_ENV: ${{ github.event.inputs.environment || 'dev' }}
     
@@ -41,7 +50,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: playwright-report-${{ github.event.inputs.environment || 'dev' }}
+        name: playwright-report-${{ github.event.inputs.environment || 'dev' }}-${{ github.event.inputs.project || 'Chromium' }}
         path: |
           playwright-report/
           test-results/
@@ -56,7 +65,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: allure-report-${{ github.event.inputs.environment || 'dev' }}
+        name: allure-report-${{ github.event.inputs.environment || 'dev' }}-${{ github.event.inputs.project || 'Chromium' }}
         path: allure-report/
         retention-days: 30
 
@@ -82,7 +91,7 @@ jobs:
       run: npx playwright install --with-deps
     
     - name: Run Playwright tests on staging
-      run: npx playwright test
+      run: npx playwright test --project=${{ github.event.inputs.project || 'Chromium' }}
       env:
         TEST_ENV: staging
     
@@ -90,7 +99,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: playwright-report-staging
+        name: playwright-report-staging-${{ github.event.inputs.project || 'Chromium' }}
         path: |
           playwright-report/
           test-results/
