@@ -6,6 +6,8 @@ export default defineConfig({
         video: 'retain-on-failure',
         trace: 'retain-on-failure',
         headless: true,
+        actionTimeout: 10000,
+        navigationTimeout: 10000,
     },
     projects: [
         {
@@ -21,6 +23,6 @@ export default defineConfig({
             use: { ...devices['Desktop Safari'] },
         },
     ],
-    reporter: [['list'], ['html']],
+    reporter: [['list'], ['html'], ['allure-playwright']],
     testDir: 'tests',
 }); 
