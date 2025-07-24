@@ -45,8 +45,23 @@ export class PimPage extends BasePage {
         return this.resultsTable;
     }
 
-    async isNoRecordsFoundVisible() {
-        return this.noRecordsFound.isVisible();
+    async isNoRecordsFound(): Promise<boolean> {
+        // Toast selector
+        const infoToast = this.page.locator('div.oxd-toast-container.oxd-toast-container--bottom div.oxd-toast.oxd-toast--info.oxd-toast-container--toast');
+        // No Records span selector
+        const noRecordsSpan = this.noRecordsFound;
+
+        // Wait up to 5s for either to appear
+        const toastPromise = infoToast.waitFor({ timeout: 5000 }).then(() => true).catch(() => false);
+        const spanPromise = noRecordsSpan.waitFor({ timeout: 5000 }).then(() => true).catch(() => false);
+
+        // If either appears, consider it as "no records found"
+        const result = await Promise.race([toastPromise, spanPromise]);
+        // If toast appeared, wait for it to disappear before returning
+        if (await infoToast.isVisible().catch(() => false)) {
+            await infoToast.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => { });
+        }
+        return result;
     }
 
     async isErrorVisible() {
@@ -66,10 +81,18 @@ export class PimPage extends BasePage {
     }
 
     async waitForSearchResults() {
-        // Wait for either results table or no records found to appear
-        await Promise.any([
-            this.page.locator('span.oxd-text--span:has-text("No Records Found")').waitFor({ timeout: 5000 }),
-            this.page.locator('div.oxd-table-card').first().waitFor({ timeout: 5000 })
+        // Wait for either results table or toast to appear
+        const tableLocator = this.page.locator('div.oxd-table-card').first();
+        const infoToast = this.page.locator('div.oxd-toast-container.oxd-toast-container--bottom div.oxd-toast.oxd-toast--info.oxd-toast-container--toast');
+
+        const appeared = await Promise.race([
+            tableLocator.waitFor({ timeout: 5000 }).then(() => 'table').catch(() => null),
+            infoToast.waitFor({ timeout: 5000 }).then(() => 'toast').catch(() => null)
         ]);
+
+        // If toast appeared, wait for it to disappear
+        if (appeared === 'toast') {
+            await infoToast.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => { });
+        }
     }
 } 

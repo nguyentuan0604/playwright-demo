@@ -32,7 +32,7 @@ test.describe('PIM Employee List Search', { tag: ['@pim-search'] }, () => {
     test('@test-id-010 Verify search using special characters in the name field', async ({ pimPage }) => {
         const specialChars = '@#!$%';
         await pimPage.searchEmployee(specialChars);
-        expect(await pimPage.isNoRecordsFoundVisible()).toBeTruthy();
+        expect(await pimPage.isNoRecordsFound()).toBeTruthy();
     });
 
     test('@test-id-011 Verify search using extremely long strings (e.g. >255 characters)', async ({ pimPage }) => {
@@ -48,17 +48,18 @@ test.describe('PIM Employee List Search', { tag: ['@pim-search'] }, () => {
 
     test('@test-id-013 Verify search with leading/trailing spaces in input', async ({ pimPage }) => {
         await pimPage.searchEmployee(`  ${Constants.validEmployeeName}  `);
-        expect(await pimPage.isNoRecordsFoundVisible()).toBeTruthy();
+        const rs = await pimPage.isNoRecordsFound();
+        expect(rs).toBeTruthy();
     });
 
     test('@test-id-014 Verify search returns no results with invalid employee name', async ({ pimPage }) => {
         await pimPage.searchEmployee('nonexistingname123');
-        expect(await pimPage.isNoRecordsFoundVisible()).toBeTruthy();
+        expect(await pimPage.isNoRecordsFound()).toBeTruthy();
     });
 
     test('@test-id-015 Verify behavior when all fields are filled with incorrect values', async ({ pimPage }) => {
         await pimPage.searchEmployee('nonexistingname123');
-        expect(await pimPage.isNoRecordsFoundVisible()).toBeTruthy();
+        expect(await pimPage.isNoRecordsFound()).toBeTruthy();
     });
 
 }); 
