@@ -9,9 +9,10 @@ This framework provides a complete solution for automated testing of web applica
 - **Page Object Model (POM)**: Maintainable and reusable test components
 - **Environment Management**: Support for multiple environments (dev, staging)
 - **Allure Reporting**: Detailed test reports and analytics
-- **GitHub Actions CI/CD**: Automated testing pipeline
+- **GitHub Actions CI/CD**: Automated testing pipeline with manual workflow dispatch
 - **TypeScript Support**: Type-safe test development
 - **Modular Architecture**: Organized locators, utilities, and page objects
+- **Flaky Test Handling**: Robust waiting strategies and conditional synchronization
 
 ## Getting Started
 
@@ -124,7 +125,7 @@ npx allure open ./allure-report
 
 ## CI/CD Integration with GitHub Actions
 
-The framework includes a comprehensive CI/CD pipeline using GitHub Actions.
+The framework includes a streamlined CI/CD pipeline using GitHub Actions with manual workflow dispatch for maximum control and flexibility.
 
 ### Manual Workflow Execution
 
@@ -135,20 +136,26 @@ The framework includes a comprehensive CI/CD pipeline using GitHub Actions.
 2. **Select Workflow**
    - Choose "Playwright Tests" workflow
 
-3. **Configure Environment**
+3. **Configure Parameters**
    - Click "Run workflow"
    - Select environment from dropdown:
      - `dev`: Development environment
      - `staging`: Staging environment
+   - Select browser/project:
+     - `Chromium`: Chrome-based browser
+     - `Firefox`: Mozilla Firefox
+     - `WebKit`: Safari engine
    - Click "Run workflow"
 
 ### Workflow Features
 
-- **Environment Selection**: Choose between dev and staging environments
+- **Manual Control**: On-demand execution with parameter selection
+- **Environment Flexibility**: Choose between dev and staging environments
+- **Browser Selection**: Test against specific browsers or all browsers
 - **Parallel Execution**: Tests run in parallel for faster execution
-- **Artifact Generation**: Test reports and screenshots are saved as artifacts
-- **Allure Integration**: Comprehensive test analytics and reporting
-- **Timeout Management**: 60-minute timeout for complete test execution
+- **Comprehensive Reporting**: Both Playwright and Allure reports generated
+- **Artifact Management**: Test results and reports saved as downloadable artifacts
+- **Timeout Protection**: 60-minute timeout for complete test execution
 
 ### Artifacts
 
@@ -157,7 +164,7 @@ The workflow generates the following artifacts:
 - **Allure Reports**: Detailed test analytics and trends
 - **Test Results**: JSON files for further analysis
 
-## Framework Structure
+## Framework Structure & Rationale
 
 ```
 playwright-demo/
@@ -186,49 +193,93 @@ playwright-demo/
 └── README.md                      # This file
 ```
 
-### Key Components
+### **Architecture Design Principles**
 
-#### **Page Objects (`pages/`)**
-- **BasePage**: Common functionality for all page objects
-- **LoginPage**: Login functionality and locators
-- **PimPage**: PIM module functionality and locators
-- **Fixtures**: Custom test fixtures for dependency injection
+#### **1. Separation of Concerns**
+- **Locators** (`locators/`): Centralized in dedicated files for easy maintenance and updates
+- **Page Objects** (`pages/`): Encapsulate page-specific logic and interactions
+- **Utilities** (`utilities/`): Reusable functions and environment configurations
+- **Tests** (`tests/`): Focus purely on test logic and assertions
+- **Environment Config** (`.profiles/`): Environment-specific settings without code changes
 
-#### **Locators (`locators/`)**
-- Centralized locator definitions
-- XPath and CSS selector support
-- Environment-specific locators
+#### **2. Maintainability & Scalability**
+- **Page Object Model**: Reduces code duplication and improves maintainability
+- **Custom Fixtures**: Provides dependency injection for clean test setup
+- **Environment Management**: Supports multiple environments without code changes
+- **Modular Structure**: Easy to add new pages, locators, and test suites
 
-#### **Utilities (`utilities/`)**
-- **Constants**: Environment-aware configuration
-- **Generate**: Utility functions for test data
+#### **3. Test Stability & Reliability**
+- **Conditional Waits**: Uses `Promise.race` and `waitFor` instead of fixed timeouts
+- **Flaky Test Handling**: Implements robust waiting strategies for dynamic content
+- **Error Handling**: Graceful handling of environment loading and element interactions
+- **Type Safety**: TypeScript ensures compile-time error detection
 
-#### **Environment Configuration (`.profiles/`)**
-- `.env.dev`: Development environment settings
-- `.env.staging`: Staging environment settings
-- Dynamic environment loading based on `TEST_ENV`
+#### **4. CI/CD Strategy**
+- **Manual Workflow Dispatch**: Provides control over when and how tests run
+- **Parameter Selection**: Allows testing specific environments and browsers
+- **Single Job Design**: Simplified pipeline reduces complexity and execution time
+- **Artifact Management**: Comprehensive reporting and result storage
 
-#### **Test Suites (`tests/`)**
-- Organized test files with descriptive names
-- Tagged tests for selective execution
-- Comprehensive test coverage
+### **Key Design Decisions**
 
-### Design Patterns
+#### **Why Page Object Model?**
+- **Reusability**: Page interactions can be reused across multiple tests
+- **Maintainability**: UI changes require updates in only one place
+- **Readability**: Tests focus on business logic rather than implementation details
+- **Testability**: Easier to unit test page interactions independently
 
-#### **Page Object Model (POM)**
-- Encapsulates page-specific logic
-- Reusable page interactions
-- Maintainable test structure
+#### **Why Custom Fixtures?**
+- **Dependency Injection**: Clean separation between test setup and execution
+- **Shared State**: Common setup and teardown across test suites
+- **Type Safety**: TypeScript ensures correct fixture usage
+- **Extensibility**: Easy to add new fixtures for additional functionality
 
-#### **Fixture Pattern**
-- Dependency injection for page objects
-- Shared test setup and teardown
-- Clean test code
+#### **Why Environment Management?**
+- **Flexibility**: Test against different environments without code changes
+- **Security**: Sensitive data kept separate from code
+- **Scalability**: Easy to add new environments (prod, qa, etc.)
+- **Consistency**: Same test code works across all environments
 
-#### **Environment Management**
-- Dynamic configuration loading
-- Environment-specific test data
-- Flexible deployment options
+#### **Why Manual CI/CD?**
+- **Control**: Run tests when needed, not on every commit
+- **Resource Management**: Avoid unnecessary CI/CD costs
+- **Debugging**: Easier to troubleshoot specific test runs
+- **Flexibility**: Choose specific environments and browsers for testing
+
+#### **Why Allure Reporting?**
+- **Rich Analytics**: Detailed test trends and metrics
+- **Interactive Reports**: Better visualization of test results
+- **Integration**: Works seamlessly with CI/CD pipelines
+- **Customization**: Extensible reporting capabilities
+
+### **Benefits of This Framework**
+
+#### **For Developers**
+- **Fast Feedback**: Parallel execution and efficient waiting strategies
+- **Easy Debugging**: Comprehensive logging and error handling
+- **Type Safety**: TypeScript prevents common runtime errors
+- **Code Reuse**: Shared utilities and page objects reduce duplication
+
+#### **For Test Engineers**
+- **Maintainable Tests**: Clear structure and separation of concerns
+- **Reliable Execution**: Robust handling of flaky elements and dynamic content
+- **Comprehensive Reporting**: Multiple report formats for different stakeholders
+- **Environment Flexibility**: Easy testing across different environments
+
+#### **For DevOps**
+- **Controlled Execution**: Manual workflow dispatch prevents resource waste
+- **Artifact Management**: Organized storage of test results and reports
+- **Scalable Pipeline**: Easy to extend for additional environments or browsers
+- **Monitoring**: Clear visibility into test execution and results
+
+### **Best Practices Implemented**
+
+1. **Naming Conventions**: Consistent naming for files, classes, and methods
+2. **Error Handling**: Graceful handling of environment and element errors
+3. **Documentation**: Comprehensive README and inline code comments
+4. **Configuration Management**: Environment-specific settings without code changes
+5. **Test Organization**: Logical grouping of related test cases
+6. **Reporting**: Multiple report formats for different use cases
 
 ## Contributing
 
@@ -236,6 +287,8 @@ playwright-demo/
 2. Add appropriate test tags for new test suites
 3. Update environment configurations as needed
 4. Ensure all tests pass before submitting changes
+5. Maintain the separation of concerns principle
+6. Add comprehensive error handling for new features
 
 ## Support
 

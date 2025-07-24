@@ -81,18 +81,13 @@ export class PimPage extends BasePage {
     }
 
     async waitForSearchResults() {
-        // Wait for either results table or toast to appear
+        // Wait for either results table or "No Records Found" message to appear
         const tableLocator = this.page.locator('div.oxd-table-card').first();
-        const infoToast = this.page.locator('div.oxd-toast-container.oxd-toast-container--bottom div.oxd-toast.oxd-toast--info.oxd-toast-container--toast');
+        const noRecordsLocator = this.page.locator('span.oxd-text--span:has-text("No Records Found")');
 
-        const appeared = await Promise.race([
-            tableLocator.waitFor({ timeout: 5000 }).then(() => 'table').catch(() => null),
-            infoToast.waitFor({ timeout: 5000 }).then(() => 'toast').catch(() => null)
+        await Promise.race([
+            tableLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => { }),
+            noRecordsLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => { })
         ]);
-
-        // If toast appeared, wait for it to disappear
-        if (appeared === 'toast') {
-            await infoToast.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => { });
-        }
     }
 } 
